@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "477073308057",
+    "project_id": "trotinete-bc1ab",
+    "storage_bucket": "trotinete-bc1ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:477073308057:android:26190f18f1ea33b9247b08",
+        "android_client_info": {
+          "package_name": "com.example.trotinete"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "477073308057-pr391mf11japveeds5tn3to14dh4fudn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXiOaoXbLK2BniPKa6HT37GsyFdyBBmGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "477073308057-pr391mf11japveeds5tn3to14dh4fudn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
