@@ -1,12 +1,15 @@
 package com.example.trotinete.Home
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.trotinete.Login.MainActivity
 import com.example.trotinete.databinding.FragmentProfileBinding
@@ -76,6 +79,9 @@ class ProfileFragment : Fragment() {
 
         }
 
+        val tY = ObjectAnimator.ofFloat(binding.scooterAnimation, "rotation", 0f, 360f)
+        tY.duration = 1000
+        tY.start()
     }
 
 
