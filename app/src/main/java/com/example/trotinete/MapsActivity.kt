@@ -2,11 +2,13 @@ package com.example.trotinete
 
 import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -29,6 +31,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener  {
@@ -41,20 +44,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private val UPDATE_INTERVAL = (10 * 1000).toLong()  /* 10 secs */
     private val FASTEST_INTERVAL: Long = 2000 /* 2 sec */
     private lateinit var database: DatabaseReference
-
-    companion object {
-        private const val LOCATION_REQUEST_CODE = 1
-    }
+    private lateinit var scootersReference: DatabaseReference
+    private val scooterMarkers = hashMapOf<Scooter, Marker>()
+    private lateinit var scooterKeys: Set<String>
+    private var userMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-//            != PackageManager.PERMISSION_GRANTED) {
-//
-//
-////            return
-//        }
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -66,14 +62,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         database = Firebase.database.reference
-
+        scootersReference = database.child("Scooters")
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.setOnMarkerClickListener(this)
-
         setUpMap()
     }
 
@@ -89,27 +84,68 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     val currentLatLong = LatLng(location.latitude, location.longitude)
                     placeMarkerOnMap(currentLatLong)
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 12f))
+                    positionScooters()
                     startLocationUpdates()
-                    //positionScooters()
                 }
             }
         }
     }
 
     private fun positionScooters() {
-        supportFragmentManager.beginTransaction().apply {
-            add(R.id.container, PositionScootersFragment::class.java, null)
-            commit()
+        // retrieve every scooter from db, then add it on map
+        val scootersListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                scooterKeys = snapshot.children.map {it.key!!}.toSet()
+                val iterator = scooterMarkers.iterator()
+                while (iterator.hasNext()) {
+                    val (scooter, marker) = iterator.next()
+                    if (scooter.key.toString() !in scooterKeys) {
+                        marker.remove()
+                        iterator.remove()
+                    }
+                }
+
+                for (child in snapshot.children) {
+                    var scooter = child.value
+                    val str = scooter.toString()
+                    scooter = getScooter(str)
+                    val marker = scooterMarkers[scooter]
+                    if (marker == null) {
+                        // Add a new marker for the scooter
+                        val latLng = LatLng(scooter.latitude, scooter.longitude)
+                        val markerOptions = MarkerOptions().position(latLng)
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                        val newMarker : Marker = mMap.addMarker(markerOptions)!!
+                        scooterMarkers[scooter] = newMarker
+                    } else {
+                        // Update the position of the existing marker
+                        marker.position = LatLng(scooter.latitude, scooter.longitude)
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@MapsActivity, "Fail to get data.", Toast.LENGTH_SHORT).show();
+            }
         }
+        scootersReference.addValueEventListener(scootersListener)
+    }
+    private fun getScooter(str : String): Scooter {
+
+        val regex = Regex("""\{latitude=([\d.]+), key=(\d+), longitude=([\d.]+)\}""")
+        val matchResult = regex.find(str)
+
+        val latitude = matchResult!!.groupValues[1].toDouble()
+        val key = matchResult.groupValues[2].toInt()
+        val longitude = matchResult.groupValues[3].toDouble()
+
+        return Scooter(key, latitude, longitude)
     }
 
     private fun placeMarkerOnMap(currentLatLong: LatLng) {
-
         val markerOptions = MarkerOptions().position(currentLatLong)
         markerOptions.title("$currentLatLong")
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-        mMap.addMarker(markerOptions)
-
+        userMarker = mMap.addMarker(markerOptions)
     }
 
     override fun onMarkerClick(p0: Marker) = false
@@ -152,10 +188,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun onLocationChanged(location: Location) {
         val location = LatLng(location.latitude, location.longitude)
-        mMap.clear()
-        placeMarkerOnMap(location)
+        userMarker?.position = location
     }
-
-
-
 }
