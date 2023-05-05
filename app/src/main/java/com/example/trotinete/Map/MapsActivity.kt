@@ -107,21 +107,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 }
 
                 for (child in snapshot.children) {
-                    var scooter = child.value
-                    val str = scooter.toString()
-                    scooter = getScooter(str)
+                    val scooter = getScooterFromString(child.value.toString())
                     val marker = scooterMarkers[scooter]
+
                     if (marker == null) {
                         // Add a new marker for the scooter
                         val latLng = LatLng(scooter.latitude, scooter.longitude)
                         val markerOptions = MarkerOptions().position(latLng)
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                        val newMarker : Marker = mMap.addMarker(markerOptions)!!
+                        markerOptions.visible(scooter.visibility)
 
-                        newMarker.tag = scooter.key;
+                        val newMarker : Marker = mMap.addMarker(markerOptions)!!
+                        newMarker.tag = scooter.key
+
                         mMap.setOnMarkerClickListener { m ->
                             addRideToDB(m.tag as Int)
                             m.isVisible = false
+                            val childUpdates = mapOf<String, Any>("visibility" to "false")
+                            scootersReference.child(m.tag.toString()).updateChildren(childUpdates)
+
                             true
                         }
 
@@ -134,33 +138,33 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 }
             }
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@MapsActivity, "Fail to get data.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this@MapsActivity, "Failed to get data.", Toast.LENGTH_SHORT).show();
             }
         }
         scootersReference.addValueEventListener(scootersListener)
 
     }
 
-    private fun getScooter(str : String): Scooter {
+    private fun getScooterFromString(str : String): Scooter {
 
-        val regex = Regex("""\{latitude=([\d.]+), key=(\d+), longitude=([\d.]+)\}""")
+        val regex = Regex("""\{visibility=(true|false), latitude=([\d.]+), key=(\d+), longitude=([\d.]+)\}""")
         val matchResult = regex.find(str)
 
-        val latitude = matchResult!!.groupValues[1].toDouble()
-        val key = matchResult.groupValues[2].toInt()
-        val longitude = matchResult.groupValues[3].toDouble()
+        val visibility = matchResult!!.groupValues[1].toBoolean()
+        val latitude = matchResult.groupValues[2].toDouble()
+        val key = matchResult.groupValues[3].toInt()
+        val longitude = matchResult.groupValues[4].toDouble()
 
-        return Scooter(key, latitude, longitude)
+        return Scooter(key, latitude, longitude, visibility)
     }
 
     private fun addRideToDB(key: Int) {
         val ride = Ride(key, calendar.time, null)
         database.child("Rides").child(key.toString()).setValue(ride).addOnSuccessListener {
-            Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Ride started!", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener{
-            Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Couldn't start ride", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun placeMarkerOnMap(currentLatLong: LatLng) {

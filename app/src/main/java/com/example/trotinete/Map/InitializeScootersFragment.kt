@@ -41,7 +41,7 @@ class InitializeScootersFragment : Fragment() {
         for (i in 0..locations.size - 1) {
 
             val location = locations[i]
-            val scooter = Scooter(scooterIds, location.latitude, location.longitude)
+            val scooter = Scooter(scooterIds, location.latitude, location.longitude, true)
             database.child("Scooters").child(scooterIds.toString()).setValue(scooter).addOnSuccessListener {
                 Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
 
