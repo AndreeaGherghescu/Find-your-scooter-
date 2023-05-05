@@ -123,7 +123,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                         mMap.setOnMarkerClickListener { m ->
                             addRideToDB(m.tag as Int)
                             m.isVisible = false
-                            val childUpdates = mapOf<String, Any>("visibility" to "false")
+                            val childUpdates = mapOf<String, Any>("visibility" to false)
                             scootersReference.child(m.tag.toString()).updateChildren(childUpdates)
 
                             true
