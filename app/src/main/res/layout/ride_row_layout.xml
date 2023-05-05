@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:id="@+id/constraint"
+    android:background="@drawable/bg_movie"
+    android:layout_margin="2dp" >
+
+    <TextView
+        android:id="@+id/ride_key"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:gravity="center"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:text="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    
+    <TextView
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        android:text="1"
+        android:paddingTop="14dp"
+        app:layout_constraintStart_toEndOf="@id/ride_key"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        android:text="1"
+        app:layout_constraintStart_toEndOf="@id/ride_key"
+        app:layout_constraintTop_toBottomOf="@id/start"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/stop_ride"
+        app:layout_constraintTop_toBottomOf="@id/finish"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/ride_key"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Finish ride"
+        android:textSize="13sp"
+        android:background="@color/purple_200"
+        android:layout_margin="5dp"
+        android:padding="0dp"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
