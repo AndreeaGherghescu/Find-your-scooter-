@@ -8,11 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
-import com.example.trotinete.InitializeScootersFragment
-import com.example.trotinete.MapsActivity
-import com.example.trotinete.R
+import com.example.trotinete.Map.MapsActivity
 import com.example.trotinete.databinding.FragmentHomeBinding
-import com.example.trotinete.databinding.FragmentLoginBinding
 
 class HomeFragment : Fragment() {
 

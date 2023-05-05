@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.trotinete.Home.HomeActivity
-import com.example.trotinete.MapsActivity
 import com.example.trotinete.R
 import com.example.trotinete.databinding.FragmentLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn

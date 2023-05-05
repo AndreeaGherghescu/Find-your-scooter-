@@ -1,4 +1,4 @@
-package com.example.trotinete
+package com.example.trotinete.Map
 
 import android.content.pm.PackageManager
 import android.location.Location
@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.os.Looper
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.example.trotinete.R
+import com.example.trotinete.Ride
+import com.example.trotinete.Scooter
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap

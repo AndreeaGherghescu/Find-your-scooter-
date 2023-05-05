@@ -6,10 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import com.example.trotinete.MapsActivity
+import com.example.trotinete.Map.MapsActivity
 import com.example.trotinete.R
 import com.example.trotinete.databinding.ActivityHomeBinding
-import com.example.trotinete.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeActivity : AppCompatActivity() {

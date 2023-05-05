@@ -1,4 +1,4 @@
-package com.example.trotinete
+package com.example.trotinete.Map
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.example.trotinete.R
+import com.example.trotinete.Scooter
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 

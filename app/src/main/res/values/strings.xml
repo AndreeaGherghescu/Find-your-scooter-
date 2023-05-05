@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Trotinete</string>
+    <string name="app_name">Find Your Scooter!</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="title_activity_main">MainActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
