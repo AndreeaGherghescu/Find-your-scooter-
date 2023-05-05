@@ -1,13 +1,10 @@
 package com.example.trotinete
 
-import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 
@@ -31,8 +28,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import java.util.Calendar
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener  {
 
@@ -48,6 +45,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private val scooterMarkers = hashMapOf<Scooter, Marker>()
     private lateinit var scooterKeys: Set<String>
     private var userMarker: Marker? = null
+    private val calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +114,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                         val markerOptions = MarkerOptions().position(latLng)
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                         val newMarker : Marker = mMap.addMarker(markerOptions)!!
+
+                        newMarker.tag = scooter.key;
+                        mMap.setOnMarkerClickListener { m ->
+                            addRideToDB(m.tag as Int)
+                            m.isVisible = false
+                            true
+                        }
+
                         scooterMarkers[scooter] = newMarker
+
                     } else {
                         // Update the position of the existing marker
                         marker.position = LatLng(scooter.latitude, scooter.longitude)
@@ -128,7 +135,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }
         }
         scootersReference.addValueEventListener(scootersListener)
+
     }
+
     private fun getScooter(str : String): Scooter {
 
         val regex = Regex("""\{latitude=([\d.]+), key=(\d+), longitude=([\d.]+)\}""")
@@ -139,6 +148,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         val longitude = matchResult.groupValues[3].toDouble()
 
         return Scooter(key, latitude, longitude)
+    }
+
+    private fun addRideToDB(key: Int) {
+        val ride = Ride(key, calendar.time, null)
+        database.child("Rides").child(key.toString()).setValue(ride).addOnSuccessListener {
+            Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener{
+            Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun placeMarkerOnMap(currentLatLong: LatLng) {
