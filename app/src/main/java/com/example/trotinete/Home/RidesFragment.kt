@@ -29,7 +29,7 @@ class RidesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        customAdapter = CustomAdapter {  }
+        customAdapter = CustomAdapter(requireContext()) {  }
         binding.ridesList.adapter = customAdapter
 
         repo.getAllRidesFromFirebase { ridesList ->

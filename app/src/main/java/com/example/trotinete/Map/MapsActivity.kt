@@ -39,7 +39,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     internal lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var lastLocation: Location
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    lateinit var fusedLocationClient: FusedLocationProviderClient
     private var mLocationRequest: LocationRequest? = null
     private val UPDATE_INTERVAL = (10 * 1000).toLong()  /* 10 secs */
     private val FASTEST_INTERVAL: Long = 2000 /* 2 sec */
@@ -159,7 +159,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun addRideToDB(key: Int) {
-        val ride = Ride(key, calendar.time, null)
+        val st = calendar.time
+        calendar.add(Calendar.HOUR_OF_DAY, 3)
+        val ft = calendar.time
+        val ride = Ride(key, st, ft)
         database.child("Rides").child(key.toString()).setValue(ride).addOnSuccessListener {
             Toast.makeText(this, "Ride started!", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener{
@@ -171,6 +174,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         val markerOptions = MarkerOptions().position(currentLatLong)
         markerOptions.title("$currentLatLong")
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+        markerOptions.anchor(0.5f, 0.8f)
         userMarker = mMap.addMarker(markerOptions)
     }
 

@@ -1,23 +1,34 @@
 package com.example.trotinete
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.trotinete.Home.RidesFragment
+import com.example.trotinete.Map.MapsActivity
 import com.example.trotinete.databinding.RideRowLayoutBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.util.Calendar
 
 class CustomAdapter(
+    private val context: Context,
     private val onItemClick: (Ride) -> Unit
 ): RecyclerView.Adapter<CustomAdapter.RidesHolder>() {
 
     lateinit var databaseReference: DatabaseReference
-    private val calendar = Calendar.getInstance()
     lateinit var binding: RideRowLayoutBinding
-    val listItems = mutableListOf<Ride>()
+    private val listItems = mutableListOf<Ride>()
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RidesHolder {
         binding = RideRowLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -28,23 +39,31 @@ class CustomAdapter(
         val item = listItems[position]
         holder.key.text = item.key.toString()
         holder.start.text = "Start time: ".plus(item.startTime.toString())
-
-        val ft = item.finishTime.toString()
-        if (ft == "null") {
-            holder.finish.text = "Finish time: -"
-        } else {
-            holder.finish.text = "Finish time: ".plus(ft)
-        }
+        holder.finish.text = "Finish until: ".plus(item.finishTime.toString())
 
         holder.button.setOnClickListener {
             databaseReference = Firebase.database.reference
 
-            var tableReference = databaseReference.child("Scooters")
-            val childUpdates = mapOf<String, Any>("visibility" to true)
-            tableReference.child(item.key.toString()).updateChildren(childUpdates)
+            val scootersReference = databaseReference.child("Scooters")
+            val ridesReference = databaseReference.child("Rides")
 
-            tableReference = databaseReference.child("Rides")
-            tableReference.child(item.key.toString()).removeValue()
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+
+                fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location: Location ->
+                        val childUpdates = mapOf<String, Any>("visibility" to true,
+                            "latitude" to location.latitude, "longitude" to location.longitude)
+                        scootersReference.child(item.key.toString()).updateChildren(childUpdates)
+                    }
+                    .addOnFailureListener {
+                        val childUpdates = mapOf<String, Any>("visibility" to true)
+                        scootersReference.child(item.key.toString()).updateChildren(childUpdates)
+                    }
+            }
+
+            ridesReference.child(item.key.toString()).removeValue()
 
             notifyItemChanged(item.key)
         }

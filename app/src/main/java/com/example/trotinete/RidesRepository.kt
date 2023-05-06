@@ -20,7 +20,7 @@ class RidesRepository {
                 for (rideSnapshot in snapshot.children) {
                     val key = rideSnapshot.key?.toInt() ?: -1
                     val startTime = rideSnapshot.child("startTime").value?.toString() ?: ""
-                    val endTime = rideSnapshot.child("endTime").value?.toString() ?: ""
+                    val endTime = rideSnapshot.child("finishTime").value?.toString() ?: ""
 
                     var startDate: Date? = null
                     var endDate: Date? = null
