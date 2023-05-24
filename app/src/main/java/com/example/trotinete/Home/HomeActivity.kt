@@ -31,10 +31,6 @@ class HomeActivity : AppCompatActivity() {
         bottomNav = binding.bottomNav
         bottomNav.setOnItemSelectedListener {
             when(it.itemId) {
-                R.id.wallet -> {
-                    setCurrentFragment(WalletFragment())
-                    true
-                }
                 R.id.rides -> {
                     setCurrentFragment(RidesFragment())
                     true

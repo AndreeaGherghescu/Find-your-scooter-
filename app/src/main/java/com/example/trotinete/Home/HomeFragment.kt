@@ -1,5 +1,6 @@
 package com.example.trotinete.Home
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -28,6 +29,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val tY = ObjectAnimator.ofFloat(binding.scooterAnimation, "rotation", 0f, 360f)
+        tY.duration = 1000
+        tY.start()
+
         binding.startRide.setOnClickListener {
             if (ActivityCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -39,11 +44,25 @@ class HomeFragment : Fragment() {
             }
 
 
+
 //      Used this to manually add some scooter locations in the database. From now on, i'll work with them
 //            requireActivity().supportFragmentManager.beginTransaction().apply {
 //                add(R.id.container, InitializeScootersFragment::class.java, null)
 //                commit()
 //            }
+        }
+
+        binding.inviteFriends.setOnClickListener {
+            val message: String = "Alaturate-te celei mai bune retele de trotinete electrice! " +
+                    "Fa-ti cont chiar acum pe Find Your Scooter si porneste spre urmatoarea ta destinatie. " +
+                    "Click aici pentru a incepe: https://play.google.com/store/apps/"
+            val intent = Intent()
+            intent.action = Intent.ACTION_SEND
+            intent.putExtra(Intent.EXTRA_TEXT, message)
+            intent.type = "text/plain"
+
+            startActivity(Intent.createChooser(intent, "Share to: "))
+
         }
     }
 }

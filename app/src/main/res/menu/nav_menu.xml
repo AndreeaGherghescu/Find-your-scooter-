@@ -16,12 +16,4 @@
         android:icon="@drawable/ic_clock"
         android:title="Rides" />
 
-    <item
-        android:id="@+id/wallet"
-        android:icon="@drawable/ic_wallet_24"
-        android:title="Wallet" />
-
-
-
-
 </menu>

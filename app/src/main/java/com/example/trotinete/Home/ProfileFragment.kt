@@ -21,7 +21,9 @@ import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.SimpleAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat.checkSelfPermission
 import com.example.trotinete.Login.MainActivity
 import com.example.trotinete.R
@@ -31,6 +33,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class ProfileFragment : Fragment() {
@@ -75,31 +81,45 @@ class ProfileFragment : Fragment() {
         if (googleAccount != null) {
             val getName = googleAccount.displayName
             name.text = "Hello, $getName!"
-            email.text = googleAccount.email
+            val getEmail = googleAccount.email
+            email.text = "Email: $getEmail"
 
         }
 
         if (firebaseAccount != null) {
-            name.text = firebaseAccount.displayName
-            email.text = firebaseAccount.email
+//            name.text = firebaseAccount.displayName
+//            email.text = firebaseAccount.email
+
+            val getName = firebaseAccount.displayName
+            name.text = "Hello, $getName!"
+            val getEmail = firebaseAccount.email
+            email.text = "Email: $getEmail"
         }
 
         signOut.setOnClickListener {
             if(googleAccount != null) {
                 gSignInClient.signOut().addOnSuccessListener {
-                    startActivity(Intent(requireContext(), MainActivity::class.java))
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    requireContext().startActivity(intent)
+                    requireActivity().finish()
+//                    startActivity(Intent(requireContext(), MainActivity::class.java))
                 }
             }
             if (firebaseAccount != null) {
                 firebaseAuth.signOut()
-                startActivity(Intent(requireContext(), MainActivity::class.java))
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                requireContext().startActivity(intent)
+                requireActivity().finish()
+//                startActivity(Intent(requireContext(), MainActivity::class.java))
             }
 
         }
 
-        val tY = ObjectAnimator.ofFloat(binding.scooterAnimation, "rotation", 0f, 360f)
-        tY.duration = 1000
-        tY.start()
+//        val tY = ObjectAnimator.ofFloat(binding.scooterAnimation, "rotation", 0f, 360f)
+//        tY.duration = 1000
+//        tY.start()
 
         binding.addPicture.setOnClickListener {
             val permissionGranted = requestCameraPermission()
@@ -107,7 +127,29 @@ class ProfileFragment : Fragment() {
                 openCameraInterface()
             }
         }
+//        binding.selectPicture.setOnClickListener {
+//            selectImage()
+//        }
+//
+//        binding.uploadPicture.setOnClickListener {
+//            uploadImage()
+//        }
+
     }
+
+//    private fun uploadImage() {
+//
+//        val fileName = "Your picture"
+//        val firebaseStorage = FirebaseStorage.getInstance().getReference("Images/$fileName")
+//        firebaseStorage.putFile(imageUri!!)
+//            .addOnSuccessListener {
+//                binding.imageView.setImageURI(null)
+//                Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+//            }.addOnFailureListener{
+//                Toast.makeText(requireContext(), "Fail", Toast.LENGTH_SHORT).show()
+//            }
+//
+//    }
 
     private fun requestCameraPermission(): Boolean {
         var permissionGranted = false
@@ -170,8 +212,4 @@ class ProfileFragment : Fragment() {
             showAlert("Failed to take picture")
         }
     }
-
-
-
-
 }

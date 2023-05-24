@@ -3,16 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/light_purple"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <ImageView
+        android:id="@+id/scooter_animation"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_electric_scooter_24"
+        />
 
     <Button
         android:id="@+id/start_ride"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/scooter_animation"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="10dp"
         android:text="Start ride"
+
         />
+
+    <Button
+        android:id="@+id/invite_friends"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start_ride"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="10dp"
+        android:text="Invite your friends" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
